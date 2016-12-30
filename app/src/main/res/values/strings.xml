@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">zafingame</string>
+    <string name="action_settings">Settings</string>
+    <string name="fab">fab</string>
+    <string name="toolbar">toolbar</string>
+</resources>
