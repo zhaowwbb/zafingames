@@ -27,8 +27,8 @@ public class GameView extends SurfaceView {
     private long lastClick;
     private long mStartTime;
     private Bitmap mContinue;
-    private Bitmap mReset;
-
+//    private Bitmap mReset;
+//
     private Bitmap mFrame;
     private Bitmap mFramefocus;
     private Bitmap mGameOverImg;
@@ -66,6 +66,17 @@ public class GameView extends SurfaceView {
     private Bitmap mLevelUpImg;
     private Bitmap mLevelImg;
     private Bitmap mScoreImg;
+    private Bitmap mBackground0Img;
+    private Bitmap mBackground1Img;
+    private Bitmap mBackground2Img;
+    private Bitmap mBackground3Img;
+    private Bitmap mBackground4Img;
+    private Bitmap mBackground5Img;
+    private Bitmap mBackground6Img;
+    private Bitmap mBackground7Img;
+    private Bitmap mBackground8Img;
+    private Bitmap mBackground9Img;
+    private Bitmap mBackgroundGameoverImg;
 
     private boolean mIsGameOver;
 
@@ -89,6 +100,9 @@ public class GameView extends SurfaceView {
     private int mTopBarHeight;
     private int mProgressBarHeight;
     private int mTotalMinions = 20;
+    private boolean mLevelUpInProgress;
+    private final static int TOTAL_BACKGROUND_PIC = 10;
+    private Bitmap[] mBackgroundPics = new Bitmap[TOTAL_BACKGROUND_PIC];
 
     private class LoadingPage{
         private boolean mIsComplete;
@@ -125,9 +139,10 @@ public class GameView extends SurfaceView {
             }
 
             Paint paint = new Paint();
-            paint.setColor(Color.BLACK);
+//            paint.setColor(Color.BLACK);
             Rect desc = new Rect(0, 0, mWidth, mHeight);
-            canvas.drawRect(desc, paint);
+//            canvas.drawRect(desc, paint);
+            canvas.drawBitmap(mBackground0Img,null, desc, paint);
 
             Paint hPaint = new Paint();
 
@@ -157,19 +172,19 @@ public class GameView extends SurfaceView {
         private int mIconBottom;
         private int mLevel;
         private int mIconTopBoder;
-        private int mSpeed = 25;
+        private int mSpeed = 50;
         private boolean mIsComplete;
         private int mHeight;
         private boolean mNeedRenderBottom;
 
         public LevelUpSplash(int width, int height, int level){
             this.mLevel = level;
-            int unit = width/4;
+            int unit = width/8;
             this.mIconLeft = unit;
             this.mIconRight = width - unit;
             this.mIconTop =  height;
             this.mIconBottom = height + unit*2;
-            this.mIconTopBoder = height - unit*2;
+            this.mIconTopBoder = height - width;
             this.mIsComplete = false;
             this.mHeight = height;
         }
@@ -179,13 +194,10 @@ public class GameView extends SurfaceView {
         }
 
         public void onDraw(Canvas canvas) {
-
-//            Rect desc = new Rect(0, mTopBar.mBottom, getWidth(), getHeight());
-//            canvas.drawRect(desc, paint);
             mTopBar.onDraw(canvas);
 
             this.mIconTop = this.mIconTop - mSpeed;
-            if(mIconBottom < mHeight){
+            if(mIconTop < mIconTopBoder){
                 this.mIsComplete = true;
                 goLevel(mLevel);
             }else{
@@ -195,10 +207,10 @@ public class GameView extends SurfaceView {
 //                Paint paint = new Paint();
                 this.mIconBottom = this.mIconBottom - mSpeed;
 
-                Rect leftDesc = new Rect(0, mIconTop, mIconLeft, mIconBottom);
-                canvas.drawRect(leftDesc, paint);
-                Rect rightDesc = new Rect(mIconRight, mIconTop, getWidth(), mIconBottom);
-                canvas.drawRect(rightDesc, paint);
+//                Rect leftDesc = new Rect(0, mIconTop, mIconLeft, mIconBottom);
+//                canvas.drawRect(leftDesc, paint);
+//                Rect rightDesc = new Rect(mIconRight, mIconTop, getWidth(), mIconBottom);
+//                canvas.drawRect(rightDesc, paint);
                 Rect iconDest = new Rect(mIconLeft, mIconTop, mIconRight, mIconBottom);
                 canvas.drawBitmap(mLevelUpImg, null, iconDest, paint);
             }
@@ -362,6 +374,141 @@ public class GameView extends SurfaceView {
         }
     }
 
+    public class Minion {
+
+        private String mName;
+        private int mLeft;
+        private int mTop;
+        private int mRight;
+        private int mBottom;
+        private int mStatus;
+        private Bitmap mFrame;
+        private Bitmap mIcon;
+        private int mFrameBorderSize;
+        private boolean mIsActive;
+        private boolean mIsDead;
+        private boolean mIsSelected;
+        private int mPos;
+        private int mAnimationSpeed = 20;
+        private int mAnimationTop;
+
+        public Minion(String name, Bitmap frame, Bitmap icon){
+            this.mName = name;
+            this.mFrame = frame;
+            this.mIcon = icon;
+            this.mIsDead = false;
+            this.mIsActive = false;
+            this.mIsSelected = false;
+        }
+
+        public void init(int left, int top, int right, int bottom, int pos){
+            this.mLeft = left;
+            this.mTop = top;
+            this.mRight = right;
+            this.mBottom = bottom;
+            int width = right - left;
+            if(width > 0){
+                //10% b
+                mFrameBorderSize = width/10;
+            }
+            this.mPos = pos;
+            this.mAnimationTop = mTop;
+        }
+
+        public void onDraw(Canvas canvas) {
+            if(!isDead()){
+                Paint paint = new Paint();
+                Rect frameDest = new Rect(mLeft, mTop, mRight, mBottom);
+                if(isSelected()) {
+                    canvas.drawBitmap(mFramefocus, null, frameDest, paint);
+                }else{
+                    canvas.drawBitmap(mFrame, null, frameDest, paint);
+                }
+                Rect iconDest = new Rect(mLeft + mFrameBorderSize, mTop + mFrameBorderSize, mRight - mFrameBorderSize, mBottom - mFrameBorderSize);
+                canvas.drawBitmap(mIcon,null, iconDest, paint);
+            }else{
+                if(isActive()){
+                    mAnimationTop = mAnimationTop + mAnimationSpeed;
+                    if(mAnimationTop >= mBottom){
+                        mIsActive = false;
+                    }else{
+                        Paint paint = new Paint();
+                        Rect frameDest = new Rect(mLeft, mAnimationTop, mRight, mBottom);
+                        canvas.drawBitmap(mFramefocus, null, frameDest, paint);
+
+                        Rect iconDest = new Rect(mLeft + mFrameBorderSize, mAnimationTop + mFrameBorderSize, mRight - mFrameBorderSize, mBottom - mFrameBorderSize);
+                        canvas.drawBitmap(mIcon,null, iconDest, paint);
+                    }
+                }else{
+                    //skip
+                }
+            }
+        }
+
+        public int getLeft(){
+            return this.mLeft;
+        }
+
+        public int getTop(){
+            return this.mTop;
+        }
+
+        public int getRight(){
+            return this.mRight;
+        }
+
+        public int getBottom(){
+            return this.mBottom;
+        }
+
+        public int getPos(){
+            return this.mPos;
+        }
+
+        public String getName(){
+            return this.mName;
+        }
+
+        public boolean isActive(){
+            return this.mIsActive;
+        }
+
+        public boolean isSelected(){
+            return mIsSelected;
+        }
+
+        public boolean isDead(){
+            return mIsDead;
+        }
+
+        public void kill(){
+            this.mIsDead = true;
+            this.mIsActive = true;
+            this.mIsSelected = true;
+        }
+
+        public void select(){
+//            this.mIsActive = false;
+            this.mIsSelected = true;
+        }
+
+        public void unselect() {
+//            this.mIsActive = true;
+            this.mIsSelected = false;
+        }
+
+        public Bitmap getFrame(){
+            return this.mFrame;
+        }
+
+        public Bitmap getIcon(){
+            return this.mIcon;
+        }
+
+        public String toString(){
+            return "name=" + mName + ",pos=" + mPos + ",mIsActive=" + mIsActive + ",mIsSelected=" + mIsSelected + ",mIsDead=" + mIsDead +",[left=" + mLeft + ",top=" + mTop + ",right=" +  mRight + ",bottom=" + mBottom + "]";
+        }
+    }
 
     public GameView(Context context) {
         super(context);
@@ -399,11 +546,11 @@ public class GameView extends SurfaceView {
 
     private void loadImage()
     {
-        mFrame = BitmapFactory.decodeResource(getResources(), R.drawable.frame);
-        mFramefocus = BitmapFactory.decodeResource(getResources(), R.drawable.framefocus);
+        mFrame = BitmapFactory.decodeResource(getResources(), R.drawable.framegolden);
+        mFramefocus = BitmapFactory.decodeResource(getResources(), R.drawable.framepink);
         mContinue = BitmapFactory.decodeResource(getResources(), R.drawable.continuelevel);
-        mReset = BitmapFactory.decodeResource(getResources(), R.drawable.resetlevel);
-        mGameOverImg = BitmapFactory.decodeResource(getResources(), R.drawable.gameover);
+//        mReset = BitmapFactory.decodeResource(getResources(), R.drawable.resetlevel);
+        mGameOverImg = BitmapFactory.decodeResource(getResources(), R.drawable.gameover2);
         mLOL001Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol001);
         mLOL002Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol002);
         mLOL003Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol003);
@@ -437,6 +584,29 @@ public class GameView extends SurfaceView {
         mLevelUpImg = BitmapFactory.decodeResource(getResources(), R.drawable.levelup);
         mLevelImg = BitmapFactory.decodeResource(getResources(), R.drawable.level);
         mScoreImg = BitmapFactory.decodeResource(getResources(), R.drawable.score);
+        mBackgroundGameoverImg = BitmapFactory.decodeResource(getResources(), R.drawable.gameoverbackground);
+
+        mBackground0Img = BitmapFactory.decodeResource(getResources(), R.drawable.background0);
+        mBackground1Img = BitmapFactory.decodeResource(getResources(), R.drawable.background1);
+        mBackground2Img = BitmapFactory.decodeResource(getResources(), R.drawable.background2);
+        mBackground3Img = BitmapFactory.decodeResource(getResources(), R.drawable.background3);
+        mBackground4Img = BitmapFactory.decodeResource(getResources(), R.drawable.background4);
+        mBackground5Img = BitmapFactory.decodeResource(getResources(), R.drawable.background5);
+        mBackground6Img = BitmapFactory.decodeResource(getResources(), R.drawable.background6);
+        mBackground7Img = BitmapFactory.decodeResource(getResources(), R.drawable.background7);
+        mBackground8Img = BitmapFactory.decodeResource(getResources(), R.drawable.background8);
+        mBackground9Img = BitmapFactory.decodeResource(getResources(), R.drawable.background9);
+        mBackgroundPics[0] = mBackground0Img;
+        mBackgroundPics[1] = mBackground1Img;
+        mBackgroundPics[2] = mBackground2Img;
+        mBackgroundPics[3] = mBackground3Img;
+        mBackgroundPics[4] = mBackground4Img;
+        mBackgroundPics[5] = mBackground5Img;
+        mBackgroundPics[6] = mBackground6Img;
+        mBackgroundPics[7] = mBackground7Img;
+        mBackgroundPics[8] = mBackground8Img;
+        mBackgroundPics[9] = mBackground9Img;
+
 
         mNumberImgArray[0] = mNumber0Img;
         mNumberImgArray[1] = mNumber1Img;
@@ -475,6 +645,7 @@ public class GameView extends SurfaceView {
 
     private void init()
     {
+        this.mLevelUpInProgress = false;
         this.mTopBarHeight = getWidth()/15;
         int minionWidth = getWidth()/4;
         int rows = (getHeight() - mTopBarHeight)/minionWidth;
@@ -583,20 +754,43 @@ public class GameView extends SurfaceView {
         }
     }
 
+    private boolean isMinionsAnimationComplete(){
+        boolean isComplete = true;
+        for(Minion c : minions) {
+            if (c.isDead()) {
+                if(c.isActive()){
+                    isComplete = false;
+                    break;
+                }
+            }
+        }
+        return isComplete;
+    }
+
     private void renderMinions(Canvas canvas){
         Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
         Rect desc = new Rect(0, mTopBar.mBottom, getWidth(), getHeight());
-        canvas.drawRect(desc, paint);
+        int backgroundPicIndex = mLevel % TOTAL_BACKGROUND_PIC;
+        Bitmap backgroundPic = mBackgroundPics[backgroundPicIndex];
+        canvas.drawBitmap(backgroundPic, null, desc, paint);
         boolean isAllDead = true;
+        boolean isAllDeadInactive = true;
         for(Minion c : minions){
             if(!c.isDead()){
                 c.onDraw(canvas);
                 isAllDead = false;
+            }else{
+                //handle dead animation
+                if(c.isActive()){
+                    c.onDraw(canvas);
+                    isAllDeadInactive = false;
+                }
             }
         }
         if(isAllDead){
-            goLevel(mLevel);
+            if(isAllDeadInactive){
+                spawnMinions();
+            }
         }
     }
 
@@ -611,8 +805,10 @@ public class GameView extends SurfaceView {
 
         mStartTime = System.currentTimeMillis();
         mLevel = level;
-        mNextLevelCount = mLevel * 2;
+        mNextLevelCount = mLevel * 2 + 2;
         mToCompleteCount = 0;
+
+
         //top bar
         mTopBar = new TopBar(mTopBarHeight, 0);
 
@@ -623,6 +819,7 @@ public class GameView extends SurfaceView {
         this.mCandyAreaTop = progressBarBottom;
         mProgressBar = new ProgressBar(progressBarHeight, progressBarTop, progressBarBottom, getWidth());
         spawnMinions();
+        mLevelUpInProgress = false;
     }
 
     @Override
@@ -632,8 +829,11 @@ public class GameView extends SurfaceView {
             return;
         }
         if(mLevelUpSplash != null && !mLevelUpSplash.isComplete()){
+            //wait animation complete
             renderMinions(canvas);
-            mLevelUpSplash.onDraw(canvas);
+            if(isMinionsAnimationComplete()){
+                mLevelUpSplash.onDraw(canvas);
+            }
             return;
         }
 
@@ -643,8 +843,6 @@ public class GameView extends SurfaceView {
             if(mToCompleteCount == mNextLevelCount){
                 levelUp(mLevel);
             }else{
-//                drawBackground(canvas);
-
                 renderMinions(canvas);
                 mProgressBar.onDraw(canvas);
                 mTopBar.onDraw(canvas);
@@ -671,6 +869,10 @@ public class GameView extends SurfaceView {
 //                    checkContinue(touchX, touchY);
                 }else {
                     if(mLoading != null && !mLoading.isComplete()){
+                        return true;
+                    }
+                    //wait animation effect
+                    if(mLevelUpInProgress){
                         return true;
                     }
                     if(mLevelUpSplash != null && !mLevelUpSplash.isComplete()){
@@ -711,6 +913,9 @@ public class GameView extends SurfaceView {
                     minions[c.getPos()].kill();
 //                    mTarget.pushBack();
                     mToCompleteCount++;
+                    if(mToCompleteCount == mNextLevelCount){
+                        mLevelUpInProgress = true;
+                    }
                 }else{
                     if(c.isSelected()){
                         minions[c.getPos()].unselect();
@@ -786,17 +991,18 @@ public class GameView extends SurfaceView {
         //reset
         if(x <= xPos + size && x >= xPos && y <= yPos + size && y >= yPos)
         {
-            goLevel(1);
+            goLevel(mLevel);
         }
     }
 
     private void gameOverMode(Canvas canvas)
     {
-        Paint colorPaint = new Paint();
-        colorPaint.setColor(Color.BLACK);
-        colorPaint.setStyle(Paint.Style.FILL);
+//        Paint colorPaint = new Paint();
+//        colorPaint.setColor(Color.BLACK);
+//        colorPaint.setStyle(Paint.Style.FILL);
         Rect rec = new Rect(0, 0, getWidth(), getHeight());
-        canvas.drawRect(rec,colorPaint);
+        canvas.drawBitmap(mBackgroundGameoverImg, null, rec, null);
+//        canvas.drawRect(rec,colorPaint);
 
         int startX = this.getHeight()/4;
         int size = this.getWidth()/4;
@@ -805,10 +1011,14 @@ public class GameView extends SurfaceView {
         Rect dst = new Rect(startY, startX, startY + size * 2, startX + size * 2);
         canvas.drawBitmap(mGameOverImg, null, dst, null);
 
-        Rect repeatDst = new Rect(startY, startX + size * 2, startY + size, startX + size * 3);
-        canvas.drawBitmap(mContinue, null, repeatDst, null);
-        Rect quitDst = new Rect(startY + size, startX + size * 2, startY + size * 2, startX + size * 3);
-        canvas.drawBitmap(mReset, null, quitDst, null);
+        Rect continueDst = new Rect(startY, startX + size * 2, startY + size * 2, startX + size * 3);
+        canvas.drawBitmap(mContinue, null, continueDst, null);
+//
+//
+//        Rect repeatDst = new Rect(startY, startX + size * 2, startY + size, startX + size * 3);
+//        canvas.drawBitmap(mContinue, null, repeatDst, null);
+//        Rect quitDst = new Rect(startY + size, startX + size * 2, startY + size * 2, startX + size * 3);
+//        canvas.drawBitmap(mReset, null, quitDst, null);
 
         mTopBar.onDraw(canvas);
     }
