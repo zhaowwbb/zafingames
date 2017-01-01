@@ -78,6 +78,27 @@ public class GameView extends SurfaceView {
     private Bitmap mBackground9Img;
     private Bitmap mBackgroundGameoverImg;
 
+    private Bitmap mAjuImg;
+    private Bitmap mCliffImg;
+    private Bitmap mDavidImg;
+    private Bitmap mDenishImg;
+    private Bitmap mFrankImg;
+    private Bitmap mJenstonImg;
+    private Bitmap mKristoperImg;
+    private Bitmap mHaoImg;
+    private Bitmap mKyleImg;
+    private Bitmap mLloydImg;
+    private Bitmap mRossImg;
+    private Bitmap mMonaImg;
+    private Bitmap mNeerajImg;
+    private Bitmap mPaulImg;
+    private Bitmap mRickImg;
+    private Bitmap mRitchImg;
+    private Bitmap mShijuImg;
+    private Bitmap mXueqianImg;
+
+
+
     private boolean mIsGameOver;
 
     private int mLevel;
@@ -103,6 +124,8 @@ public class GameView extends SurfaceView {
     private boolean mLevelUpInProgress;
     private final static int TOTAL_BACKGROUND_PIC = 10;
     private Bitmap[] mBackgroundPics = new Bitmap[TOTAL_BACKGROUND_PIC];
+
+    private List<Minion> mZafinPeople = new ArrayList<Minion>();
 
     private class LoadingPage{
         private boolean mIsComplete;
@@ -389,7 +412,7 @@ public class GameView extends SurfaceView {
         private boolean mIsDead;
         private boolean mIsSelected;
         private int mPos;
-        private int mAnimationSpeed = 20;
+        private int mAnimationSpeed = 30;
         private int mAnimationTop;
 
         public Minion(String name, Bitmap frame, Bitmap icon){
@@ -618,6 +641,26 @@ public class GameView extends SurfaceView {
         mNumberImgArray[7] = mNumber7Img;
         mNumberImgArray[8] = mNumber8Img;
         mNumberImgArray[9] = mNumber9Img;
+
+        //zafin people
+        mAjuImg = BitmapFactory.decodeResource(getResources(), R.drawable.aju);
+        mCliffImg = BitmapFactory.decodeResource(getResources(), R.drawable.cliff);
+        mDenishImg = BitmapFactory.decodeResource(getResources(), R.drawable.dinesh);
+        mFrankImg = BitmapFactory.decodeResource(getResources(), R.drawable.frank);
+        mJenstonImg = BitmapFactory.decodeResource(getResources(), R.drawable.jenston);
+        mKristoperImg = BitmapFactory.decodeResource(getResources(), R.drawable.kristophermoran);
+        mHaoImg = BitmapFactory.decodeResource(getResources(), R.drawable.kuanghao);
+        mKyleImg = BitmapFactory.decodeResource(getResources(), R.drawable.kyle);
+        mLloydImg = BitmapFactory.decodeResource(getResources(), R.drawable.lloyd);
+        mRossImg = BitmapFactory.decodeResource(getResources(), R.drawable.michaelross);
+        mMonaImg = BitmapFactory.decodeResource(getResources(), R.drawable.mona);
+        mNeerajImg = BitmapFactory.decodeResource(getResources(), R.drawable.neeraj);
+        mPaulImg = BitmapFactory.decodeResource(getResources(), R.drawable.paul);
+        mRickImg = BitmapFactory.decodeResource(getResources(), R.drawable.rickzhao);
+        mRitchImg = BitmapFactory.decodeResource(getResources(), R.drawable.ritch);
+        mShijuImg = BitmapFactory.decodeResource(getResources(), R.drawable.shiju);
+        mXueqianImg = BitmapFactory.decodeResource(getResources(), R.drawable.xueqianwang);
+
     }
 
     public List<Integer> getNumberImage(int n){
@@ -657,6 +700,23 @@ public class GameView extends SurfaceView {
         this.mTotalMinions = rows * 4;
         this.mProgressBarHeight = progressHeight;
 
+        this.mZafinPeople.add(new Minion("aju", mFrame, mAjuImg));
+        this.mZafinPeople.add(new Minion("cliff", mFrame, mCliffImg));
+        this.mZafinPeople.add(new Minion("denish", mFrame, mDenishImg));
+        this.mZafinPeople.add(new Minion("frank", mFrame, mFrankImg));
+        this.mZafinPeople.add(new Minion("jenston", mFrame, mJenstonImg));
+        this.mZafinPeople.add(new Minion("kristoper", mFrame, mKristoperImg));
+        this.mZafinPeople.add(new Minion("kyle", mFrame, mKyleImg));
+        this.mZafinPeople.add(new Minion("lloyd", mFrame, mLloydImg));
+        this.mZafinPeople.add(new Minion("ross", mFrame, mRossImg));
+        this.mZafinPeople.add(new Minion("mona", mFrame, mMonaImg));
+        this.mZafinPeople.add(new Minion("neerag", mFrame, mNeerajImg));
+        this.mZafinPeople.add(new Minion("paul", mFrame, mPaulImg));
+        this.mZafinPeople.add(new Minion("rick", mFrame, mRickImg));
+        this.mZafinPeople.add(new Minion("ritch", mFrame, mRitchImg));
+        this.mZafinPeople.add(new Minion("shiju", mFrame, mShijuImg));
+        this.mZafinPeople.add(new Minion("xueqian", mFrame, mXueqianImg));
+
         mLoading = new LoadingPage(getWidth(), getHeight());
 //        mSplash = new Splash(mGalaxyImg, getWidth(), getHeight(), mLevel);
         goLevel(1);
@@ -675,24 +735,30 @@ public class GameView extends SurfaceView {
     private List<Minion> addMinions(List<Minion> list){
         List<Minion> allList = new ArrayList<Minion>();
 
-        allList.add(new Minion("lol001", mFrame, mLOL001Img));
-        allList.add(new Minion("lol002", mFrame, mLOL002Img));
-        allList.add(new Minion("lol003", mFrame, mLOL003Img));
-        allList.add(new Minion("lol004", mFrame, mLOL004Img));
-        allList.add(new Minion("lol005", mFrame, mLOL005Img));
-        allList.add(new Minion("lol006", mFrame, mLOL006Img));
-        allList.add(new Minion("lol007", mFrame, mLOL007Img));
-        allList.add(new Minion("lol008", mFrame, mLOL008Img));
-        allList.add(new Minion("lol009", mFrame, mLOL009Img));
-        allList.add(new Minion("lol010", mFrame, mLOL010Img));
-        allList.add(new Minion("lol011", mFrame, mLOL011Img));
-        allList.add(new Minion("lol012", mFrame, mLOL012Img));
-        allList.add(new Minion("lol013", mFrame, mLOL013Img));
-        allList.add(new Minion("lol014", mFrame, mLOL014Img));
-        allList.add(new Minion("lol015", mFrame, mLOL015Img));
-        allList.add(new Minion("lol016", mFrame, mLOL016Img));
-        allList.add(new Minion("lol017", mFrame, mLOL017Img));
-        allList.add(new Minion("lol018", mFrame, mLOL018Img));
+        if(mLevel < 5 || mLevel > 10 ){
+            for(Minion people: mZafinPeople){
+                allList.add(people);
+            }
+        }else{
+            allList.add(new Minion("lol001", mFrame, mLOL001Img));
+            allList.add(new Minion("lol002", mFrame, mLOL002Img));
+            allList.add(new Minion("lol003", mFrame, mLOL003Img));
+            allList.add(new Minion("lol004", mFrame, mLOL004Img));
+            allList.add(new Minion("lol005", mFrame, mLOL005Img));
+            allList.add(new Minion("lol006", mFrame, mLOL006Img));
+            allList.add(new Minion("lol007", mFrame, mLOL007Img));
+            allList.add(new Minion("lol008", mFrame, mLOL008Img));
+            allList.add(new Minion("lol009", mFrame, mLOL009Img));
+            allList.add(new Minion("lol010", mFrame, mLOL010Img));
+            allList.add(new Minion("lol011", mFrame, mLOL011Img));
+            allList.add(new Minion("lol012", mFrame, mLOL012Img));
+            allList.add(new Minion("lol013", mFrame, mLOL013Img));
+            allList.add(new Minion("lol014", mFrame, mLOL014Img));
+            allList.add(new Minion("lol015", mFrame, mLOL015Img));
+            allList.add(new Minion("lol016", mFrame, mLOL016Img));
+            allList.add(new Minion("lol017", mFrame, mLOL017Img));
+            allList.add(new Minion("lol018", mFrame, mLOL018Img));
+        }
 
         int uniqueMinions = mTotalMinions/2;
         //add 20 entities
@@ -949,17 +1015,17 @@ public class GameView extends SurfaceView {
                 }
             }
 
-            boolean isAllDead = true;
-            for(int i = 0; i < minions.length; i++) {
-                Minion obj = minions[i];
-                if(!obj.isDead()){
-                    isAllDead = false;
-                    break;
-                }
-            }
-            if(isAllDead){
-                spawnMinions();
-            }
+//            boolean isAllDead = true;
+//            for(int i = 0; i < minions.length; i++) {
+//                Minion obj = minions[i];
+//                if(!obj.isDead()){
+//                    isAllDead = false;
+//                    break;
+//                }
+//            }
+//            if(isAllDead){
+//                spawnMinions();
+//            }
         }
     }
 
