@@ -1083,8 +1083,8 @@ public class GameView extends SurfaceView {
         mLevelUpInProgress = false;
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
+
+    public void renderScreen(Canvas canvas) {
         if(!mLoading.isComplete()){
             mLoading.onDraw(canvas);
             return;
