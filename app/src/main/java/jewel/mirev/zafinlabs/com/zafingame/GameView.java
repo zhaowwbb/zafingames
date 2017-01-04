@@ -27,8 +27,7 @@ public class GameView extends SurfaceView {
     private long lastClick;
     private long mStartTime;
     private Bitmap mContinue;
-//    private Bitmap mReset;
-//
+
     private Bitmap mFrame;
     private Bitmap mFramefocus;
     private Bitmap mGameOverImg;
@@ -50,7 +49,28 @@ public class GameView extends SurfaceView {
     private Bitmap mLOL016Img;
     private Bitmap mLOL017Img;
     private Bitmap mLOL018Img;
-
+    private Bitmap mLOL019Img;
+    private Bitmap mLOL020Img;
+    private Bitmap mLOL021Img;
+    private Bitmap mLOL022Img;
+    private Bitmap mLOL023Img;
+    private Bitmap mLOL024Img;
+    private Bitmap mLOL025Img;
+    private Bitmap mLOL026Img;
+    private Bitmap mLOL027Img;
+    private Bitmap mLOL028Img;
+    private Bitmap mLOL029Img;
+    private Bitmap mLOL030Img;
+    private Bitmap mLOL031Img;
+    private Bitmap mLOL032Img;
+    private Bitmap mLOL033Img;
+    private Bitmap mLOL034Img;
+    private Bitmap mLOL035Img;
+    private Bitmap mLOL036Img;
+    private Bitmap mLOL037Img;
+    private Bitmap mLOL038Img;
+    private Bitmap mLOL039Img;
+    private Bitmap mLOL040Img;
 
     private Bitmap mNumber0Img;
     private Bitmap mNumber1Img;
@@ -77,27 +97,7 @@ public class GameView extends SurfaceView {
     private Bitmap mBackground8Img;
     private Bitmap mBackground9Img;
     private Bitmap mBackgroundGameoverImg;
-
-    private Bitmap mAjuImg;
-    private Bitmap mCliffImg;
-    private Bitmap mDavidImg;
-    private Bitmap mDenishImg;
-    private Bitmap mFrankImg;
-    private Bitmap mJenstonImg;
-    private Bitmap mKristoperImg;
-    private Bitmap mHaoImg;
-    private Bitmap mKyleImg;
-    private Bitmap mLloydImg;
-    private Bitmap mRossImg;
-    private Bitmap mMonaImg;
-    private Bitmap mNeerajImg;
-    private Bitmap mPaulImg;
-    private Bitmap mRickImg;
-    private Bitmap mRitchImg;
-    private Bitmap mShijuImg;
-    private Bitmap mXueqianImg;
-
-
+    private Bitmap mLoadingPageImg;
 
     private boolean mIsGameOver;
 
@@ -125,12 +125,30 @@ public class GameView extends SurfaceView {
     private final static int TOTAL_BACKGROUND_PIC = 10;
     private Bitmap[] mBackgroundPics = new Bitmap[TOTAL_BACKGROUND_PIC];
 
-    private List<Minion> mZafinPeople = new ArrayList<Minion>();
+    private boolean mIsBackgroundImageLoaded = false;
+    private boolean mIsNumberImageLoaded = false;
+    private boolean mIsMinionImageLoaded = false;
+    private boolean mIsOtherImageLoaded = false;
+
+
+    public final static int ANIMATION_MODE_LEFT_MOVE = 1;
+    public final static int ANIMATION_MODE_RIGHT_MOVE = 2;
+    public final static int ANIMATION_MODE_TOP_MOVE = 3;
+    public final static int ANIMATION_MODE_BOTTOM_MOVE = 4;
+    public final static int ANIMATION_MODE_ALL_MOVE = 5;
+
+    private int mRepeatCounter = 0;
+    private int mStartMinionPos = 0;
+
+
+    private List<Minion> mAllMinions = new ArrayList<Minion>();
 
     private class LoadingPage{
         private boolean mIsComplete;
         private int mWidth;
         private int mHeight;
+        private final static long STEP_LOADING_TIME = 1500;
+        private long mLoadingTime;
 
         private int mProgressBarHeight;
 //        private int mProgressBarLeft;
@@ -141,15 +159,14 @@ public class GameView extends SurfaceView {
         public LoadingPage(int width, int height){
             this.mWidth = width;
             this.mHeight = height;
-//            this.mProgressBarWidth = 10;
             mProgressBarHeight = height/5;
 
-//            this.mProgressBarTop = mProgressBarHeight * 3;
-//            this.mProgressBarBottom = mProgressBarHeight * 4;
-//            this.mProgressBarLeft = 0;
             this.mProgressBarRight = width/20;
             this.mUnit = mProgressBarRight;
             this.mIsComplete = false;
+            this.mLoadingTime = System.currentTimeMillis();
+
+            mLoadingPageImg = BitmapFactory.decodeResource(getResources(), R.drawable.golden);
         }
 
         public boolean isComplete(){
@@ -158,14 +175,16 @@ public class GameView extends SurfaceView {
 
         public void onDraw(Canvas canvas) {
             if(mIsComplete){
+
                 return;
             }
 
+            long curTime;
+            long time;
+
             Paint paint = new Paint();
-//            paint.setColor(Color.BLACK);
             Rect desc = new Rect(0, 0, mWidth, mHeight);
-//            canvas.drawRect(desc, paint);
-            canvas.drawBitmap(mBackground0Img,null, desc, paint);
+            canvas.drawBitmap(mLoadingPageImg,null, desc, paint);
 
             Paint hPaint = new Paint();
 
@@ -174,17 +193,58 @@ public class GameView extends SurfaceView {
             hPaint.setColor(Color.RED);
             hPaint.setTextAlign(Paint.Align.LEFT);
             int percent = (mProgressBarRight * 100)/mWidth;
-            String str = "Loading Game [" + percent +"%]";
             int textStartPos = mWidth/10;
-            canvas.drawText(str, textStartPos, (mProgressBarHeight*3)/2, hPaint);
 
-            if(!mIsComplete){
-                mProgressBarRight =  mProgressBarRight + mUnit;
-                if(mProgressBarRight >= mWidth){
-                    mIsComplete = true;
-                    mProgressBarRight = mWidth - mUnit;
+            if(!mIsBackgroundImageLoaded){
+                String str = "Loading ... [10%]";
+                canvas.drawText(str, textStartPos, (mProgressBarHeight*3)/2, hPaint);
+                curTime = System.currentTimeMillis();
+                time = curTime - mLoadingTime;
+                if(time >= STEP_LOADING_TIME){
+                    mLoadingTime = curTime;
+                    loadBackgroundImages();
+                }
+            }else{
+                if(!mIsNumberImageLoaded){
+                    String str = "Loading ... [30%]";
+                    canvas.drawText(str, textStartPos, (mProgressBarHeight*3)/2, hPaint);
+                    curTime = System.currentTimeMillis();
+                    time = curTime - mLoadingTime;
+                    if(time >= STEP_LOADING_TIME) {
+                        mLoadingTime = curTime;
+                        loadNumberImage();
+                    }
+                }else{
+                    if(!mIsMinionImageLoaded){
+                        String str = "Loading ... [80%]";
+                        canvas.drawText(str, textStartPos, (mProgressBarHeight*3)/2, hPaint);
+
+                        curTime = System.currentTimeMillis();
+                        time = curTime - mLoadingTime;
+                        if(time >= STEP_LOADING_TIME) {
+                            mLoadingTime = curTime;
+                            loadMinionImage();
+                        }
+                    }else{
+                        if(!mIsOtherImageLoaded){
+                            String str = "Loading ... [90%]";
+                            canvas.drawText(str, textStartPos, (mProgressBarHeight*3)/2, hPaint);
+                            curTime = System.currentTimeMillis();
+                            time = curTime - mLoadingTime;
+                            if(time >= STEP_LOADING_TIME) {
+                                mLoadingTime = curTime;
+                                loadOtherImages();
+                            }
+                        }else{
+                            mIsComplete = true;
+                            loadAllMinions();
+                            goLevel(1);
+                        }
+
+                    }
                 }
             }
+
         }
     }
 
@@ -397,7 +457,19 @@ public class GameView extends SurfaceView {
         }
     }
 
+    private boolean isValidAnimation(int animationMode){
+        if(animationMode ==  ANIMATION_MODE_LEFT_MOVE ||
+                animationMode == ANIMATION_MODE_RIGHT_MOVE ||
+                animationMode == ANIMATION_MODE_TOP_MOVE ||
+                animationMode == ANIMATION_MODE_BOTTOM_MOVE ||
+                animationMode == ANIMATION_MODE_ALL_MOVE){
+            return true;
+        }
+        return false;
+    }
+
     public class Minion {
+
 
         private String mName;
         private int mLeft;
@@ -413,7 +485,11 @@ public class GameView extends SurfaceView {
         private boolean mIsSelected;
         private int mPos;
         private int mAnimationSpeed = 30;
+        private int mAnimationLeft;
         private int mAnimationTop;
+        private int mAnimationRight;
+        private int mAnimationBottom;
+        private int mAnimationMode;
 
         public Minion(String name, Bitmap frame, Bitmap icon){
             this.mName = name;
@@ -422,6 +498,22 @@ public class GameView extends SurfaceView {
             this.mIsDead = false;
             this.mIsActive = false;
             this.mIsSelected = false;
+        }
+
+        public Minion(String name, Bitmap frame, Bitmap icon, int animationMode){
+            this.mName = name;
+            this.mFrame = frame;
+            this.mIcon = icon;
+            this.mIsDead = false;
+            this.mIsActive = false;
+            this.mIsSelected = false;
+
+            if(isValidAnimation(animationMode)){
+                this.mAnimationMode = animationMode;
+            }else{
+                this.mAnimationMode = ANIMATION_MODE_LEFT_MOVE;
+            }
+            Log.i(TAG, "[rick] Minion(), animationMode=" + animationMode + ",mAnimationMode=" + mAnimationMode);
         }
 
         public void init(int left, int top, int right, int bottom, int pos){
@@ -435,7 +527,10 @@ public class GameView extends SurfaceView {
                 mFrameBorderSize = width/10;
             }
             this.mPos = pos;
+            this.mAnimationLeft = mLeft;
+            this.mAnimationRight = mRight;
             this.mAnimationTop = mTop;
+            this.mAnimationBottom = mBottom;
         }
 
         public void onDraw(Canvas canvas) {
@@ -451,15 +546,42 @@ public class GameView extends SurfaceView {
                 canvas.drawBitmap(mIcon,null, iconDest, paint);
             }else{
                 if(isActive()){
-                    mAnimationTop = mAnimationTop + mAnimationSpeed;
-                    if(mAnimationTop >= mBottom){
-                        mIsActive = false;
-                    }else{
+                    if(ANIMATION_MODE_LEFT_MOVE == mAnimationMode){
+                        mAnimationLeft = mAnimationLeft + mAnimationSpeed;
+                        if(mAnimationLeft >= mRight){
+                            mIsActive = false;
+                        }
+                    }else if(ANIMATION_MODE_RIGHT_MOVE == mAnimationMode){
+                        mAnimationRight = mAnimationRight - mAnimationSpeed;
+                        if(mAnimationRight <= mLeft){
+                            mIsActive = false;
+                        }
+                    }else if(ANIMATION_MODE_TOP_MOVE == mAnimationMode){
+                        mAnimationTop = mAnimationTop + mAnimationSpeed;
+                        if(mAnimationTop >= mBottom){
+                            mIsActive = false;
+                        }
+                    }else if(ANIMATION_MODE_BOTTOM_MOVE == mAnimationMode){
+                        mAnimationBottom = mAnimationBottom - mAnimationSpeed;
+                        if(mAnimationBottom <= mTop){
+                            mIsActive = false;
+                        }
+                    }else if(ANIMATION_MODE_ALL_MOVE == mAnimationMode){
+                        mAnimationLeft = mAnimationLeft + mAnimationSpeed;
+                        mAnimationRight = mAnimationRight - mAnimationSpeed;
+                        mAnimationTop = mAnimationTop + mAnimationSpeed;
+                        mAnimationBottom = mAnimationBottom - mAnimationSpeed;
+                        if(mAnimationLeft >= mAnimationRight || mAnimationTop >= mAnimationBottom){
+                            mIsActive = false;
+                        }
+                    }
+//                    Log.i(TAG, "[rick] mAnimationMode=" + mAnimationMode);
+                    if(isActive()){
                         Paint paint = new Paint();
-                        Rect frameDest = new Rect(mLeft, mAnimationTop, mRight, mBottom);
+                        Rect frameDest = new Rect(mAnimationLeft, mAnimationTop, mAnimationRight, mAnimationBottom);
                         canvas.drawBitmap(mFramefocus, null, frameDest, paint);
 
-                        Rect iconDest = new Rect(mLeft + mFrameBorderSize, mAnimationTop + mFrameBorderSize, mRight - mFrameBorderSize, mBottom - mFrameBorderSize);
+                        Rect iconDest = new Rect(mAnimationLeft + mFrameBorderSize, mAnimationTop + mFrameBorderSize, mAnimationRight - mFrameBorderSize, mAnimationBottom - mFrameBorderSize);
                         canvas.drawBitmap(mIcon,null, iconDest, paint);
                     }
                 }else{
@@ -504,6 +626,10 @@ public class GameView extends SurfaceView {
             return mIsDead;
         }
 
+        public int getAnimationMode(){
+            return this.mAnimationMode;
+        }
+
         public void kill(){
             this.mIsDead = true;
             this.mIsActive = true;
@@ -529,7 +655,7 @@ public class GameView extends SurfaceView {
         }
 
         public String toString(){
-            return "name=" + mName + ",pos=" + mPos + ",mIsActive=" + mIsActive + ",mIsSelected=" + mIsSelected + ",mIsDead=" + mIsDead +",[left=" + mLeft + ",top=" + mTop + ",right=" +  mRight + ",bottom=" + mBottom + "]";
+            return "name=" + mName + ",mAnimationMode=" + mAnimationMode + ",pos=" + mPos + ",mIsActive=" + mIsActive + ",mIsSelected=" + mIsSelected + ",mIsDead=" + mIsDead +",[left=" + mLeft + ",top=" + mTop + ",right=" +  mRight + ",bottom=" + mBottom + "]";
         }
     }
 
@@ -564,51 +690,10 @@ public class GameView extends SurfaceView {
             }
         });
 
-        loadImage();
+
     }
 
-    private void loadImage()
-    {
-        mFrame = BitmapFactory.decodeResource(getResources(), R.drawable.framegolden);
-        mFramefocus = BitmapFactory.decodeResource(getResources(), R.drawable.framepink);
-        mContinue = BitmapFactory.decodeResource(getResources(), R.drawable.continuelevel);
-//        mReset = BitmapFactory.decodeResource(getResources(), R.drawable.resetlevel);
-        mGameOverImg = BitmapFactory.decodeResource(getResources(), R.drawable.gameover2);
-        mLOL001Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol001);
-        mLOL002Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol002);
-        mLOL003Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol003);
-        mLOL004Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol004);
-        mLOL005Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol005);
-        mLOL006Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol006);
-        mLOL007Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol007);
-        mLOL008Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol008);
-        mLOL009Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol009);
-        mLOL010Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol010);
-        mLOL011Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol011);
-        mLOL012Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol012);
-        mLOL013Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol013);
-        mLOL014Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol014);
-        mLOL015Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol015);
-        mLOL016Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol016);
-        mLOL017Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol017);
-        mLOL018Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol018);
-
-        mNumber0Img = BitmapFactory.decodeResource(getResources(), R.drawable.number0);
-        mNumber1Img = BitmapFactory.decodeResource(getResources(), R.drawable.number1);
-        mNumber2Img = BitmapFactory.decodeResource(getResources(), R.drawable.number2);
-        mNumber3Img = BitmapFactory.decodeResource(getResources(), R.drawable.number3);
-        mNumber4Img = BitmapFactory.decodeResource(getResources(), R.drawable.number4);
-        mNumber5Img = BitmapFactory.decodeResource(getResources(), R.drawable.number5);
-        mNumber6Img = BitmapFactory.decodeResource(getResources(), R.drawable.number6);
-        mNumber7Img = BitmapFactory.decodeResource(getResources(), R.drawable.number7);
-        mNumber8Img = BitmapFactory.decodeResource(getResources(), R.drawable.number8);
-        mNumber9Img = BitmapFactory.decodeResource(getResources(), R.drawable.number9);
-        mToLeftImg = BitmapFactory.decodeResource(getResources(), R.drawable.toleft);
-        mLevelUpImg = BitmapFactory.decodeResource(getResources(), R.drawable.levelup);
-        mLevelImg = BitmapFactory.decodeResource(getResources(), R.drawable.level);
-        mScoreImg = BitmapFactory.decodeResource(getResources(), R.drawable.score);
-        mBackgroundGameoverImg = BitmapFactory.decodeResource(getResources(), R.drawable.gameoverbackground);
-
+    private void loadBackgroundImages(){
         mBackground0Img = BitmapFactory.decodeResource(getResources(), R.drawable.background0);
         mBackground1Img = BitmapFactory.decodeResource(getResources(), R.drawable.background1);
         mBackground2Img = BitmapFactory.decodeResource(getResources(), R.drawable.background2);
@@ -630,6 +715,22 @@ public class GameView extends SurfaceView {
         mBackgroundPics[8] = mBackground8Img;
         mBackgroundPics[9] = mBackground9Img;
 
+        this.mIsBackgroundImageLoaded = true;
+
+        Log.i(TAG, "[rick] loadBackgroundImages() complete");
+    }
+
+    private void loadNumberImage(){
+        mNumber0Img = BitmapFactory.decodeResource(getResources(), R.drawable.number0);
+        mNumber1Img = BitmapFactory.decodeResource(getResources(), R.drawable.number1);
+        mNumber2Img = BitmapFactory.decodeResource(getResources(), R.drawable.number2);
+        mNumber3Img = BitmapFactory.decodeResource(getResources(), R.drawable.number3);
+        mNumber4Img = BitmapFactory.decodeResource(getResources(), R.drawable.number4);
+        mNumber5Img = BitmapFactory.decodeResource(getResources(), R.drawable.number5);
+        mNumber6Img = BitmapFactory.decodeResource(getResources(), R.drawable.number6);
+        mNumber7Img = BitmapFactory.decodeResource(getResources(), R.drawable.number7);
+        mNumber8Img = BitmapFactory.decodeResource(getResources(), R.drawable.number8);
+        mNumber9Img = BitmapFactory.decodeResource(getResources(), R.drawable.number9);
 
         mNumberImgArray[0] = mNumber0Img;
         mNumberImgArray[1] = mNumber1Img;
@@ -642,25 +743,116 @@ public class GameView extends SurfaceView {
         mNumberImgArray[8] = mNumber8Img;
         mNumberImgArray[9] = mNumber9Img;
 
-        //zafin people
-        mAjuImg = BitmapFactory.decodeResource(getResources(), R.drawable.aju);
-        mCliffImg = BitmapFactory.decodeResource(getResources(), R.drawable.cliff);
-        mDenishImg = BitmapFactory.decodeResource(getResources(), R.drawable.dinesh);
-        mFrankImg = BitmapFactory.decodeResource(getResources(), R.drawable.frank);
-        mJenstonImg = BitmapFactory.decodeResource(getResources(), R.drawable.jenston);
-        mKristoperImg = BitmapFactory.decodeResource(getResources(), R.drawable.kristophermoran);
-        mHaoImg = BitmapFactory.decodeResource(getResources(), R.drawable.kuanghao);
-        mKyleImg = BitmapFactory.decodeResource(getResources(), R.drawable.kyle);
-        mLloydImg = BitmapFactory.decodeResource(getResources(), R.drawable.lloyd);
-        mRossImg = BitmapFactory.decodeResource(getResources(), R.drawable.michaelross);
-        mMonaImg = BitmapFactory.decodeResource(getResources(), R.drawable.mona);
-        mNeerajImg = BitmapFactory.decodeResource(getResources(), R.drawable.neeraj);
-        mPaulImg = BitmapFactory.decodeResource(getResources(), R.drawable.paul);
-        mRickImg = BitmapFactory.decodeResource(getResources(), R.drawable.rickzhao);
-        mRitchImg = BitmapFactory.decodeResource(getResources(), R.drawable.ritch);
-        mShijuImg = BitmapFactory.decodeResource(getResources(), R.drawable.shiju);
-        mXueqianImg = BitmapFactory.decodeResource(getResources(), R.drawable.xueqianwang);
+        this.mIsNumberImageLoaded = true;
+        Log.i(TAG, "[rick] loadNumberImage() complete");
+    }
 
+    private void loadMinionImage(){
+        mLOL001Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol001);
+        mLOL002Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol002);
+        mLOL003Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol003);
+        mLOL004Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol004);
+        mLOL005Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol005);
+        mLOL006Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol006);
+        mLOL007Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol007);
+        mLOL008Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol008);
+        mLOL009Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol009);
+        mLOL010Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol010);
+        mLOL011Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol011);
+        mLOL012Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol012);
+        mLOL013Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol013);
+        mLOL014Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol014);
+        mLOL015Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol015);
+        mLOL016Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol016);
+        mLOL017Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol017);
+        mLOL018Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol018);
+        mLOL019Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol019);
+        mLOL020Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol020);
+        mLOL021Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol021);
+        mLOL022Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol022);
+        mLOL023Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol023);
+        mLOL024Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol024);
+        mLOL025Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol025);
+        mLOL026Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol026);
+        mLOL027Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol027);
+        mLOL028Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol028);
+        mLOL029Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol029);
+        mLOL030Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol030);
+        mLOL031Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol031);
+        mLOL032Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol032);
+        mLOL033Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol033);
+        mLOL034Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol034);
+        mLOL035Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol035);
+        mLOL036Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol036);
+        mLOL037Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol037);
+        mLOL038Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol038);
+        mLOL039Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol039);
+        mLOL040Img = BitmapFactory.decodeResource(getResources(), R.drawable.lol040);
+
+        this.mIsMinionImageLoaded = true;
+
+        Log.i(TAG, "[rick] loadMinionImage() complete");
+    }
+
+    private void loadOtherImages(){
+        mFrame = BitmapFactory.decodeResource(getResources(), R.drawable.framegolden);
+        mFramefocus = BitmapFactory.decodeResource(getResources(), R.drawable.framepink);
+        mContinue = BitmapFactory.decodeResource(getResources(), R.drawable.continuelevel);
+        mGameOverImg = BitmapFactory.decodeResource(getResources(), R.drawable.gameover2);
+        mToLeftImg = BitmapFactory.decodeResource(getResources(), R.drawable.toleft);
+        mLevelUpImg = BitmapFactory.decodeResource(getResources(), R.drawable.levelup);
+        mLevelImg = BitmapFactory.decodeResource(getResources(), R.drawable.level);
+        mScoreImg = BitmapFactory.decodeResource(getResources(), R.drawable.score);
+        mBackgroundGameoverImg = BitmapFactory.decodeResource(getResources(), R.drawable.gameoverbackground);
+
+        this.mIsOtherImageLoaded = true;
+
+        Log.i(TAG, "[rick] loadOtherImages() complete");
+    }
+
+    private void loadAllMinions(){
+        mAllMinions.clear();
+        mAllMinions.add(new Minion("lol001", mFrame, mLOL001Img));
+        mAllMinions.add(new Minion("lol002", mFrame, mLOL002Img));
+        mAllMinions.add(new Minion("lol003", mFrame, mLOL003Img));
+        mAllMinions.add(new Minion("lol004", mFrame, mLOL004Img));
+        mAllMinions.add(new Minion("lol005", mFrame, mLOL005Img));
+        mAllMinions.add(new Minion("lol006", mFrame, mLOL006Img));
+        mAllMinions.add(new Minion("lol007", mFrame, mLOL007Img));
+        mAllMinions.add(new Minion("lol008", mFrame, mLOL008Img));
+        mAllMinions.add(new Minion("lol009", mFrame, mLOL009Img));
+        mAllMinions.add(new Minion("lol010", mFrame, mLOL010Img));
+        mAllMinions.add(new Minion("lol011", mFrame, mLOL011Img));
+        mAllMinions.add(new Minion("lol012", mFrame, mLOL012Img));
+        mAllMinions.add(new Minion("lol013", mFrame, mLOL013Img));
+        mAllMinions.add(new Minion("lol014", mFrame, mLOL014Img));
+        mAllMinions.add(new Minion("lol015", mFrame, mLOL015Img));
+        mAllMinions.add(new Minion("lol016", mFrame, mLOL016Img));
+        mAllMinions.add(new Minion("lol017", mFrame, mLOL017Img));
+        mAllMinions.add(new Minion("lol018", mFrame, mLOL018Img));
+        mAllMinions.add(new Minion("lol019", mFrame, mLOL019Img));
+        mAllMinions.add(new Minion("lol020", mFrame, mLOL020Img));
+        mAllMinions.add(new Minion("lol021", mFrame, mLOL021Img));
+        mAllMinions.add(new Minion("lol022", mFrame, mLOL022Img));
+        mAllMinions.add(new Minion("lol023", mFrame, mLOL023Img));
+        mAllMinions.add(new Minion("lol024", mFrame, mLOL024Img));
+        mAllMinions.add(new Minion("lol025", mFrame, mLOL025Img));
+        mAllMinions.add(new Minion("lol026", mFrame, mLOL026Img));
+        mAllMinions.add(new Minion("lol027", mFrame, mLOL027Img));
+        mAllMinions.add(new Minion("lol028", mFrame, mLOL028Img));
+        mAllMinions.add(new Minion("lol029", mFrame, mLOL029Img));
+        mAllMinions.add(new Minion("lol030", mFrame, mLOL030Img));
+        mAllMinions.add(new Minion("lol031", mFrame, mLOL031Img));
+        mAllMinions.add(new Minion("lol032", mFrame, mLOL032Img));
+        mAllMinions.add(new Minion("lol033", mFrame, mLOL033Img));
+        mAllMinions.add(new Minion("lol034", mFrame, mLOL034Img));
+        mAllMinions.add(new Minion("lol035", mFrame, mLOL035Img));
+        mAllMinions.add(new Minion("lol036", mFrame, mLOL036Img));
+        mAllMinions.add(new Minion("lol037", mFrame, mLOL037Img));
+        mAllMinions.add(new Minion("lol038", mFrame, mLOL038Img));
+        mAllMinions.add(new Minion("lol039", mFrame, mLOL039Img));
+        mAllMinions.add(new Minion("lol040", mFrame, mLOL040Img));
+        Log.i(TAG, "loadAllMinions() complete: mAllMinionsc=" + mAllMinions);
     }
 
     public List<Integer> getNumberImage(int n){
@@ -686,10 +878,17 @@ public class GameView extends SurfaceView {
         return rndInt(0, max);
     }
 
+    private void calTopBarHeight(){
+        this.mTopBarHeight = getWidth()/15;
+    }
+
     private void init()
     {
         this.mLevelUpInProgress = false;
-        this.mTopBarHeight = getWidth()/15;
+        this.mLevel = 0;
+        this.mRepeatCounter = 0;
+        this.mStartMinionPos = 0;
+        calTopBarHeight();
         int minionWidth = getWidth()/4;
         int rows = (getHeight() - mTopBarHeight)/minionWidth;
         int progressHeight = getHeight() - mTopBarHeight - rows*minionWidth;
@@ -700,26 +899,12 @@ public class GameView extends SurfaceView {
         this.mTotalMinions = rows * 4;
         this.mProgressBarHeight = progressHeight;
 
-        this.mZafinPeople.add(new Minion("aju", mFrame, mAjuImg));
-        this.mZafinPeople.add(new Minion("cliff", mFrame, mCliffImg));
-        this.mZafinPeople.add(new Minion("denish", mFrame, mDenishImg));
-        this.mZafinPeople.add(new Minion("frank", mFrame, mFrankImg));
-        this.mZafinPeople.add(new Minion("jenston", mFrame, mJenstonImg));
-        this.mZafinPeople.add(new Minion("kristoper", mFrame, mKristoperImg));
-        this.mZafinPeople.add(new Minion("kyle", mFrame, mKyleImg));
-        this.mZafinPeople.add(new Minion("lloyd", mFrame, mLloydImg));
-        this.mZafinPeople.add(new Minion("ross", mFrame, mRossImg));
-        this.mZafinPeople.add(new Minion("mona", mFrame, mMonaImg));
-        this.mZafinPeople.add(new Minion("neerag", mFrame, mNeerajImg));
-        this.mZafinPeople.add(new Minion("paul", mFrame, mPaulImg));
-        this.mZafinPeople.add(new Minion("rick", mFrame, mRickImg));
-        this.mZafinPeople.add(new Minion("ritch", mFrame, mRitchImg));
-        this.mZafinPeople.add(new Minion("shiju", mFrame, mShijuImg));
-        this.mZafinPeople.add(new Minion("xueqian", mFrame, mXueqianImg));
+        mIsBackgroundImageLoaded = false;
+        mIsNumberImageLoaded = false;
+        mIsMinionImageLoaded = false;
+        mIsOtherImageLoaded = false;
 
         mLoading = new LoadingPage(getWidth(), getHeight());
-//        mSplash = new Splash(mGalaxyImg, getWidth(), getHeight(), mLevel);
-        goLevel(1);
     }
 
     public void setGameOver(boolean isOver)
@@ -733,34 +918,52 @@ public class GameView extends SurfaceView {
     }
 
     private List<Minion> addMinions(List<Minion> list){
+        int uniqueMinions = mTotalMinions/2;
         List<Minion> allList = new ArrayList<Minion>();
-
-        if(mLevel < 5 || mLevel > 10 ){
-            for(Minion people: mZafinPeople){
-                allList.add(people);
-            }
-        }else{
-            allList.add(new Minion("lol001", mFrame, mLOL001Img));
-            allList.add(new Minion("lol002", mFrame, mLOL002Img));
-            allList.add(new Minion("lol003", mFrame, mLOL003Img));
-            allList.add(new Minion("lol004", mFrame, mLOL004Img));
-            allList.add(new Minion("lol005", mFrame, mLOL005Img));
-            allList.add(new Minion("lol006", mFrame, mLOL006Img));
-            allList.add(new Minion("lol007", mFrame, mLOL007Img));
-            allList.add(new Minion("lol008", mFrame, mLOL008Img));
-            allList.add(new Minion("lol009", mFrame, mLOL009Img));
-            allList.add(new Minion("lol010", mFrame, mLOL010Img));
-            allList.add(new Minion("lol011", mFrame, mLOL011Img));
-            allList.add(new Minion("lol012", mFrame, mLOL012Img));
-            allList.add(new Minion("lol013", mFrame, mLOL013Img));
-            allList.add(new Minion("lol014", mFrame, mLOL014Img));
-            allList.add(new Minion("lol015", mFrame, mLOL015Img));
-            allList.add(new Minion("lol016", mFrame, mLOL016Img));
-            allList.add(new Minion("lol017", mFrame, mLOL017Img));
-            allList.add(new Minion("lol018", mFrame, mLOL018Img));
+        if(mLevel % 3 == 0){
+            this.mStartMinionPos = this.mStartMinionPos + 1;
+        }
+        int start = mStartMinionPos * uniqueMinions;
+        int end = start + uniqueMinions;
+        if(start >= mAllMinions.size() || end >= mAllMinions.size()){
+            mStartMinionPos = 0;
+            start = 0;
+            end = uniqueMinions;
         }
 
-        int uniqueMinions = mTotalMinions/2;
+        int level = mLevel % 5;
+        int animationMode;
+        Log.i(TAG, "mLevel=" + mLevel + ",level=" + level );
+        switch(level){
+            case 0:
+                animationMode = ANIMATION_MODE_ALL_MOVE;
+                break;
+            case 1:
+                animationMode = ANIMATION_MODE_LEFT_MOVE;
+                break;
+            case 2:
+                animationMode = ANIMATION_MODE_RIGHT_MOVE;
+                break;
+            case 3:
+                animationMode = ANIMATION_MODE_TOP_MOVE;
+                break;
+            case 4:
+                animationMode = ANIMATION_MODE_BOTTOM_MOVE;
+                break;
+
+            default:
+                animationMode = ANIMATION_MODE_LEFT_MOVE;
+                break;
+        }
+//        Log.i(TAG, "uniqueMinions=" + uniqueMinions + ",count=" + count );
+
+        Log.i(TAG, "addMinions(), start=" + start + ",end=" + end );
+        for(int i = start; i < end; i++){
+            Minion m = mAllMinions.get(i);
+            allList.add(new Minion(m.getName(), mFrame, m.getIcon(), animationMode));
+        }
+        Log.i(TAG, "allList.size()=" + allList.size() + ",mAllMinions.size()=" + mAllMinions.size() + ", allList=" + allList);
+
         //add 20 entities
         for(int i = 0; i < uniqueMinions; i++){
             Log.i(TAG, "i: " + i + ", allList.size()=" + allList.size() + ",list:" + list);
@@ -784,7 +987,7 @@ public class GameView extends SurfaceView {
         while(list.size() > 0){
             int pos = rndInt(list.size() - 1);
             Minion c = list.remove(pos);
-            minions[index++] = new Minion(c.getName(), c.getFrame(), c.getIcon());
+            minions[index++] = new Minion(c.getName(), c.getFrame(), c.getIcon(), c.getAnimationMode());
         }
 
         int size = getWidth()/4;
@@ -803,20 +1006,15 @@ public class GameView extends SurfaceView {
             top = startPos + (row * size);
             bottom = startPos + (row + 1)*size;
 
-//            c.init(left,top, right, bottom);
-            Log.i(TAG, "[rick]i:" + i + ",[left=" + left + ",top=" + top + ",right=" +  right + ",bottom=" + bottom + "]");
-//            c.setPos(i);
-//            candies[i] = c;
+            Log.i(TAG, "[rick]i:" + i + ",mode=" + c.getAnimationMode() + ",[left=" + left + ",top=" + top + ",right=" +  right + ",bottom=" + bottom + "]");
 
             minions[i].init(left,top, right, bottom, i);
         //    Log.i(TAG, "candies[i]:" + candies[i]);
         }
         //print log
-        Log.i(TAG, "############## Candy list ##############");
+        Log.i(TAG, "############## Minion list ##############");
         for(int i = 0; i < minions.length; i++){
             Minion c = minions[i];
-         //   Log.i(TAG, " [1]Candy: " + c);
-       //     Log.i(TAG, " [2]Candy: " + candies[i]);
         }
     }
 
@@ -853,15 +1051,11 @@ public class GameView extends SurfaceView {
                 }
             }
         }
-        if(isAllDead){
-            if(isAllDeadInactive){
-                spawnMinions();
-            }
-        }
     }
 
     private void levelUp(int level){
         int newLevel = level + 1;
+        this.mRepeatCounter = mRepeatCounter + 1;
         this.mLevelUpSplash = new LevelUpSplash(getWidth(), getHeight(), newLevel);
 
     }
@@ -871,9 +1065,10 @@ public class GameView extends SurfaceView {
 
         mStartTime = System.currentTimeMillis();
         mLevel = level;
-        mNextLevelCount = mLevel * 2 + 2;
-        mToCompleteCount = 0;
+        int uniqueMinions = this.mTotalMinions/2;
+        this.mNextLevelCount = uniqueMinions;
 
+        mToCompleteCount = 0;
 
         //top bar
         mTopBar = new TopBar(mTopBarHeight, 0);
@@ -921,7 +1116,7 @@ public class GameView extends SurfaceView {
 //        if (event.getAction() == MotionEvent.ACTION_DOWN) {
 //
 //        }
-        if (System.currentTimeMillis() - lastClick > 300) {
+        if (System.currentTimeMillis() - lastClick > 200) {
             lastClick = System.currentTimeMillis();
             synchronized (getHolder()) {
                 float x = event.getX();
@@ -1014,18 +1209,6 @@ public class GameView extends SurfaceView {
                     }
                 }
             }
-
-//            boolean isAllDead = true;
-//            for(int i = 0; i < minions.length; i++) {
-//                Minion obj = minions[i];
-//                if(!obj.isDead()){
-//                    isAllDead = false;
-//                    break;
-//                }
-//            }
-//            if(isAllDead){
-//                spawnMinions();
-//            }
         }
     }
 
@@ -1063,12 +1246,8 @@ public class GameView extends SurfaceView {
 
     private void gameOverMode(Canvas canvas)
     {
-//        Paint colorPaint = new Paint();
-//        colorPaint.setColor(Color.BLACK);
-//        colorPaint.setStyle(Paint.Style.FILL);
         Rect rec = new Rect(0, 0, getWidth(), getHeight());
         canvas.drawBitmap(mBackgroundGameoverImg, null, rec, null);
-//        canvas.drawRect(rec,colorPaint);
 
         int startX = this.getHeight()/4;
         int size = this.getWidth()/4;
@@ -1079,12 +1258,6 @@ public class GameView extends SurfaceView {
 
         Rect continueDst = new Rect(startY, startX + size * 2, startY + size * 2, startX + size * 3);
         canvas.drawBitmap(mContinue, null, continueDst, null);
-//
-//
-//        Rect repeatDst = new Rect(startY, startX + size * 2, startY + size, startX + size * 3);
-//        canvas.drawBitmap(mContinue, null, repeatDst, null);
-//        Rect quitDst = new Rect(startY + size, startX + size * 2, startY + size * 2, startX + size * 3);
-//        canvas.drawBitmap(mReset, null, quitDst, null);
 
         mTopBar.onDraw(canvas);
     }
