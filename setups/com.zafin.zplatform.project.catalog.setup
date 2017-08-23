@@ -139,12 +139,16 @@
             id="startexplorer.update.site"
             name="startexplorer.update.site"
             value="https://fabioz.github.com/startexplorer/update/"/>
+			
+<!--			
         <setupTask
             xsi:type="setup:VariableTask"
             id="kieler.update.site"
             name="kieler.update.site"
             value="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/"
             defaultValue=""/>
+-->			
+			
         <setupTask
             xsi:type="setup:VariableTask"
             id="swtbot.update.site"
@@ -2054,6 +2058,8 @@
 -->			
         <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
       </setupTask>
+	  
+<!--	  
       <setupTask
           xsi:type="setup.p2:P2Task"
           label="Kieler">
@@ -2062,6 +2068,8 @@
         <repository
             url="${kieler.update.site}"/>
       </setupTask>
+-->	  
+	  
       <setupTask
           xsi:type="setup.p2:P2Task"
           id="p2.swtbot"
@@ -2132,8 +2140,12 @@
             name="org.eclipse.emf.query.feature.group"/>
         <requirement
             name="org.eclipse.emf.compare.feature.group"/>
+			
+<!--			
         <requirement
             name="de.cau.cs.kieler.klighd.sdk.feature.feature.group"/>
+-->			
+			
         <requirement
             name="org.activiti.designer.feature.feature.group"/>
         <repositoryList
@@ -2144,8 +2156,12 @@
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
               url="${zafin.update.site}"/>
+			  
+<!--			  
           <repository
               url="${kieler.update.site}"/>
+-->			  
+			  
         </repositoryList>
       </targlet>
     </setupTask>
