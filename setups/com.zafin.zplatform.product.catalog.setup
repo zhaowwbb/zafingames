@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:ProductCatalog xmi:version="2.0" name="com.zafin.zplatform" label="ZPlatform Projects" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:setup="http://www.eclipse.org/oomph/setup/1.0" xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0">
+<setupTask xsi:type="setup:InstallationTask" id="installation">
+<description/>
+</setupTask>
+<setupTask xsi:type="setup.p2:P2Task">
+<requirement name="org.eclipse.oomph.setup.feature.group"/>
+<repository url="${oomph.update.url}"/>
+</setupTask>
+<setupTask xsi:type="setup:EclipseIniTask" option="-Doomph.redirection.zafinproduct" value="=index:/redirectable.products.setup->https://raw.githubusercontent.com/nbhusare/oomph-test/master/oomph-files/com.zafin.zplatform.product.catalog.setup" vm="true"/>
+<setupTask xsi:type="setup:EclipseIniTask" option="-Doomph.redirection.zafinproject" value="=index:/redirectable.projects.setup->https://raw.githubusercontent.com/nbhusare/oomph-test/master/oomph-files/com.zafin.zplatform.project.catalog.setup" vm="true"/>
+<product name="ZPlatform" label="ZPlatform">
+<version name="neon" label="Neon" requiredJavaVersion="1.8">
+<annotation source="http://www.eclipse.org/oomph/setup/BrandingInfo">
+<detail key="siteURI">
+<value>https://www.eclipse.org/downloads/packages/eclipse-ide-java-and-dsl-developers/neon2rc3</value>
+</detail>
+</annotation>
+<setupTask xsi:type="setup.p2:P2Task" label="Eclipse DSL Tools (Neon)">
+<requirement name="epp.package.dsl" versionRange="[4.6.0,4.7.0)"/>
+<requirement name="org.eclipse.platform.feature.group" versionRange="[4.6.0,4.7.0)"/>
+<requirement name="org.eclipse.rcp.feature.group" versionRange="[4.6.0,4.7.0)"/>
+<requirement name="org.eclipse.jdt.feature.group" versionRange="[3.12.0,3.13.0)"/>
+<requirement name="org.eclipse.pde.feature.group" versionRange="[3.12.0,3.13.0)"/>
+<requirement name="org.eclipse.emf.ecore.xcore.sdk.feature.group"/>
+<requirement name="org.eclipse.emf.mwe2.language.sdk.feature.group"/>
+<requirement name="org.eclipse.emf.sdk.feature.group"/>
+<requirement name="org.eclipse.xtext.sdk.feature.group"/>
+<repository url="http://download.eclipse.org/technology/epp/packages/neon"/>
+<repository url="http://download.eclipse.org/releases/neon/201610111000"/>
+</setupTask>
+</version>
+<version name="mars" label="Mars" requiredJavaVersion="1.7">
+<annotation source="http://www.eclipse.org/oomph/setup/BrandingInfo">
+<detail key="siteURI">
+<value>https://www.eclipse.org/downloads/packages/eclipse-ide-java-and-dsl-developers/mars2</value>
+</detail>
+</annotation>
+<setupTask xsi:type="setup.p2:P2Task" label="Eclipse DSL Tools (Mars)">
+<requirement name="epp.package.dsl" versionRange="[4.5.0,4.6.0)"/>
+<requirement name="org.eclipse.platform.feature.group" versionRange="[4.5.0,4.6.0)"/>
+<requirement name="org.eclipse.rcp.feature.group" versionRange="[4.5.0,4.6.0)"/>
+<requirement name="org.eclipse.jdt.feature.group" versionRange="[3.11.0,3.12.0)"/>
+<requirement name="org.eclipse.pde.feature.group" versionRange="[3.11.0,3.12.0)"/>
+<repository url="http://download.eclipse.org/technology/epp/packages/mars"/>
+<repository url="http://download.eclipse.org/releases/mars/201602261000"/>
+</setupTask>
+</version>
+<version name="oxygen" label="Oxygen" requiredJavaVersion="1.8">
+<annotation source="http://www.eclipse.org/oomph/setup/BrandingInfo">
+<detail key="siteURI">
+<value>https://www.eclipse.org/downloads/packages/eclipse-ide-java-and-dsl-developers/oxygenm6</value>
+</detail>
+</annotation>
+<setupTask xsi:type="setup.p2:P2Task" label="Eclipse DSL Tools (Oxygen)">
+<requirement name="epp.package.dsl" versionRange="[4.7.0,4.8.0)"/>
+<requirement name="org.eclipse.platform.feature.group" versionRange="[4.7.0,4.8.0)"/>
+<requirement name="org.eclipse.rcp.feature.group" versionRange="[4.7.0,4.8.0)"/>
+<requirement name="org.eclipse.jdt.feature.group" versionRange="[3.12.0,3.14.0)"/>
+<requirement name="org.eclipse.pde.feature.group" versionRange="[3.12.0,3.14.0)"/>
+<requirement name="org.eclipse.emf.ecore.xcore.sdk.feature.group"/>
+<requirement name="org.eclipse.emf.mwe2.language.sdk.feature.group"/>
+<requirement name="org.eclipse.emf.sdk.feature.group"/>
+<requirement name="org.eclipse.xtext.sdk.feature.group"/>
+<repository url="http://download.eclipse.org/technology/epp/packages/oxygen"/>
+<repository url="http://download.eclipse.org/releases/oxygen"/>
+</setupTask>
+</version>
+</product>
+<description>com.zafin.zplatform provides cool products</description>
+</setup:ProductCatalog>
