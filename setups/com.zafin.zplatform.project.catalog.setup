@@ -88,11 +88,15 @@
             id="findbugs.update.site"
             name="findbugs.update.site"
             value="http://findbugs.cs.umd.edu/eclipse"/>
+
+<!--			
         <setupTask
             xsi:type="setup:VariableTask"
             id="cs.update.site"
             name="cs.update.site"
             value="http://eclipse-cs.sf.net/update"/>
+-->			
+			
         <setupTask
             xsi:type="setup:VariableTask"
             id="jetty.update.site"
