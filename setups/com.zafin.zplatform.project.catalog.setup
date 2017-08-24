@@ -2038,8 +2038,11 @@
             url="${startexplorer.update.site}"/>
         <repository
             url="${findbugs.update.site}"/>
+<!--			
         <repository
             url="${cs.update.site}"/>
+-->			
+			
         <repository
             url="${jetty.update.site}"/>
         <repository
