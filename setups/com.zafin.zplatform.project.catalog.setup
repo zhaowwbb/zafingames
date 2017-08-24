@@ -89,13 +89,13 @@
             name="findbugs.update.site"
             value="http://findbugs.cs.umd.edu/eclipse"/>
 
-<!--			
+<!--	-->			
         <setupTask
             xsi:type="setup:VariableTask"
             id="cs.update.site"
             name="cs.update.site"
             value="http://eclipse-cs.sf.net/update"/>
--->			
+		
 			
         <setupTask
             xsi:type="setup:VariableTask"
@@ -2038,10 +2038,10 @@
             url="${startexplorer.update.site}"/>
         <repository
             url="${findbugs.update.site}"/>
-<!--			
+<!--	-->			
         <repository
             url="${cs.update.site}"/>
--->			
+		
 			
         <repository
             url="${jetty.update.site}"/>
@@ -2245,8 +2245,8 @@
         refresh="true"
         clean="true"/>
     <stream
-        name="ad_NB_ZP-618_Final"
-        label="ad_NB_ZP-618_Final"/>
+        name="zplatform-develop"
+        label="zplatform-develop"/>
     <logicalProjectContainer
         xsi:type="setup:ProjectCatalog"
         href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']"/>
