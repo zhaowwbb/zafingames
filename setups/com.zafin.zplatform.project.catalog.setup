@@ -2038,9 +2038,7 @@
             url="${startexplorer.update.site}"/>
         <repository
             url="${findbugs.update.site}"/>
-<!--	-->			
-        <repository
-            url="${cs.update.site}"/>
+
 		
 			
         <repository
@@ -2062,7 +2060,12 @@
 <!--			
         <repository
             url="${eclemma.update.site}"/>
--->			
+-->		
+
+<!--	-->			
+        <repository
+            url="${cs.update.site}"/>
+	
         <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
       </setupTask>
 	  
