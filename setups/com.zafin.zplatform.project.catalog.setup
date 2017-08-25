@@ -89,13 +89,13 @@
             name="findbugs.update.site"
             value="http://findbugs.cs.umd.edu/eclipse"/>
 
-<!--	-->			
+<!--		
         <setupTask
             xsi:type="setup:VariableTask"
             id="cs.update.site"
             name="cs.update.site"
             value="http://eclipse-cs.sf.net/update"/>
-		
+-->				
 			
         <setupTask
             xsi:type="setup:VariableTask"
@@ -2062,10 +2062,10 @@
             url="${eclemma.update.site}"/>
 -->		
 
-<!--	-->			
+<!--			
         <repository
             url="${cs.update.site}"/>
-	
+-->		
         <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
       </setupTask>
 	  
